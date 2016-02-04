@@ -166,6 +166,10 @@ def task(ctx, config):
                         'but not available on osd role: {r}'.format(
                             r=remote.name))
 
+    for f in ['powercycle', 'bdev_inject_crash']:
+        if config.get(f):
+            ctx.manager.config[f] = config.get(f)
+
     log.info('Beginning thrashosds...')
     thrash_proc = ceph_manager.Thrasher(
         ctx.manager,
