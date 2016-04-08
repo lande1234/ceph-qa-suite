@@ -4,3 +4,4 @@ roles:
 log-rotate:
   ceph-mds: 10G
   ceph-osd: 10G
+  ceph-fuse: 5M
