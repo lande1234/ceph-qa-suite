@@ -168,14 +168,14 @@ class MDSCluster(object):
         return self.json_asok(['config', 'get', key], service_type, service_id)[key]
 
     def set_ceph_conf(self, subsys, key, value):
-        if subsys not in self._ctx.ceph.conf:
-            self._ctx.ceph.conf[subsys] = {}
-        self._ctx.ceph.conf[subsys][key] = value
+        if subsys not in self._ctx.ceph['ceph'].conf:
+            self._ctx.ceph['ceph'].conf[subsys] = {}
+        self._ctx.ceph['ceph'].conf[subsys][key] = value
         write_conf(self._ctx)  # XXX because we don't have the ceph task's config object, if they
                                # used a different config path this won't work.
 
     def clear_ceph_conf(self, subsys, key):
-        del self._ctx.ceph.conf[subsys][key]
+        del self._ctx.ceph['ceph'].conf[subsys][key]
         write_conf(self._ctx)
 
     def json_asok(self, command, service_type, service_id):
@@ -419,7 +419,7 @@ class Filesystem(MDSCluster):
         else:
             return False
 
-    def get_daemon_names(self, state):
+    def get_daemon_names(self, state=None):
         """
         Return MDS daemon names of those daemons in the given state
         :param state:
@@ -428,7 +428,7 @@ class Filesystem(MDSCluster):
         status = self.get_mds_map()
         result = []
         for mds_status in sorted(status['info'].values(), lambda a, b: cmp(a['rank'], b['rank'])):
-            if mds_status['state'] == state:
+            if mds_status['state'] == state or state is None:
                 result.append(mds_status['name'])
 
         return result

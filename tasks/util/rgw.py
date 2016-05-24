@@ -71,7 +71,7 @@ def get_user_successful_ops(out, user):
 def get_zone_host_and_port(ctx, client, zone):
     _, region_map = rgwadmin(ctx, client, check_status=True,
                              cmd=['-n', client, 'region-map', 'get'])
-    regions = region_map['regions']
+    regions = region_map['zonegroups']
     for region in regions:
         for zone_info in region['val']['zones']:
             if zone_info['name'] == zone:
@@ -85,7 +85,7 @@ def get_zone_host_and_port(ctx, client, zone):
 def get_master_zone(ctx, client):
     _, region_map = rgwadmin(ctx, client, check_status=True,
                              cmd=['-n', client, 'region-map', 'get'])
-    regions = region_map['regions']
+    regions = region_map['zonegroups']
     for region in regions:
         is_master = (region['val']['is_master'] == "true")
         log.info('region={r} is_master={ism}'.format(r=region, ism=is_master))
@@ -119,21 +119,21 @@ def get_zone_system_keys(ctx, client, zone):
     return system_key['access_key'], system_key['secret_key']
 
 def zone_for_client(ctx, client):
-    ceph_config = ctx.ceph.conf.get('global', {})
-    ceph_config.update(ctx.ceph.conf.get('client', {}))
-    ceph_config.update(ctx.ceph.conf.get(client, {}))
+    ceph_config = ctx.ceph['ceph'].conf.get('global', {})
+    ceph_config.update(ctx.ceph['ceph'].conf.get('client', {}))
+    ceph_config.update(ctx.ceph['ceph'].conf.get(client, {}))
     return ceph_config.get('rgw zone')
 
 def region_for_client(ctx, client):
-    ceph_config = ctx.ceph.conf.get('global', {})
-    ceph_config.update(ctx.ceph.conf.get('client', {}))
-    ceph_config.update(ctx.ceph.conf.get(client, {}))
+    ceph_config = ctx.ceph['ceph'].conf.get('global', {})
+    ceph_config.update(ctx.ceph['ceph'].conf.get('client', {}))
+    ceph_config.update(ctx.ceph['ceph'].conf.get(client, {}))
     return ceph_config.get('rgw region')
 
 def radosgw_data_log_window(ctx, client):
-    ceph_config = ctx.ceph.conf.get('global', {})
-    ceph_config.update(ctx.ceph.conf.get('client', {}))
-    ceph_config.update(ctx.ceph.conf.get(client, {}))
+    ceph_config = ctx.ceph['ceph'].conf.get('global', {})
+    ceph_config.update(ctx.ceph['ceph'].conf.get('client', {}))
+    ceph_config.update(ctx.ceph['ceph'].conf.get(client, {}))
     return ceph_config.get('rgw data log window', 30)
 
 def radosgw_agent_sync_data(ctx, agent_host, agent_port, full=False):
