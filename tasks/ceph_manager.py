@@ -1325,7 +1325,7 @@ class CephManager:
                     'min_size',
                     str(min_size))
             self.pools[pool_name] = pg_num
-        time.sleep(1)
+        time.sleep(3)
 
     def add_pool_snap(self, pool_name, snap_name):
         """
